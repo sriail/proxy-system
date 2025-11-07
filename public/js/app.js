@@ -105,8 +105,9 @@ class ProxyApp {
         // Configure transport
         if (transport === 'epoxy' && typeof BareMux !== 'undefined') {
             try {
+                const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
                 const BareMuxInstance = new BareMux.BareMuxConnection('/baremux/worker.js');
-                await BareMuxInstance.setTransport('/epoxy/index.js', [{ wisp: 'ws://' + window.location.host + '/wisp/' }]);
+                await BareMuxInstance.setTransport('/epoxy/index.js', [{ wisp: protocol + window.location.host + '/wisp/' }]);
                 console.log('✓ Epoxy transport configured');
             } catch (error) {
                 console.warn('Epoxy transport setup failed, falling back to Bare:', error);
@@ -121,8 +122,9 @@ class ProxyApp {
         
         if (transport === 'epoxy' && typeof BareMux !== 'undefined') {
             try {
+                const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
                 const BareMuxInstance = new BareMux.BareMuxConnection('/baremux/worker.js');
-                await BareMuxInstance.setTransport('/epoxy/index.js', [{ wisp: 'ws://' + window.location.host + '/wisp/' }]);
+                await BareMuxInstance.setTransport('/epoxy/index.js', [{ wisp: protocol + window.location.host + '/wisp/' }]);
                 console.log('✓ Scramjet with Epoxy transport configured');
             } catch (error) {
                 console.warn('Epoxy transport setup failed:', error);
@@ -182,10 +184,12 @@ class ProxyApp {
                     proxiedUrl = '/scramjet/service/' + encoded;
                 } else {
                     console.error('Scramjet codecs not loaded');
+                    this.showError('Scramjet codecs not loaded. Please refresh the page.');
                     return;
                 }
             } else {
                 console.error('Proxy backend not properly initialized');
+                this.showError('Proxy backend not properly initialized. Please refresh the page.');
                 return;
             }
 
@@ -196,8 +200,40 @@ class ProxyApp {
 
         } catch (error) {
             console.error('Error opening proxied URL:', error);
-            alert('Failed to open URL through proxy. Please check console for details.');
+            this.showError('Failed to open URL through proxy. Please check console for details.');
         }
+    }
+
+    // Show error message
+    showError(message) {
+        // Create error notification if it doesn't exist
+        let errorDiv = document.getElementById('error-notification');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'error-notification';
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(239, 68, 68, 0.95);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 10000;
+                max-width: 400px;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(errorDiv);
+        }
+        
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
     }
 
     // Load settings from localStorage

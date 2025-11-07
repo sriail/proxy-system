@@ -421,6 +421,17 @@ footer {
     50% { opacity: 0.5; }
 }
 
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 .footer-text {
     color: var(--text-muted);
     font-size: 0.9rem;
