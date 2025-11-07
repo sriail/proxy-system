@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy System - Secure Web Access</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔒 Secure Proxy System</h1>
+            <p class="subtitle">Private and secure web browsing with multiple proxy backends</p>
+        </header>
+
+        <nav class="nav-bar">
+            <button class="nav-btn active" data-page="search">Search</button>
+            <button class="nav-btn" data-page="settings">Settings</button>
+        </nav>
+
+        <!-- Search Page -->
+        <div class="page active" id="search-page">
+            <div class="search-container">
+                <form id="search-form">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search with DuckDuckGo or enter a URL..." 
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </form>
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+
+            <div class="quick-links">
+                <h3>Quick Access</h3>
+                <div class="links-grid">
+                    <a href="#" class="quick-link" data-url="https://duckduckgo.com">DuckDuckGo</a>
+                    <a href="#" class="quick-link" data-url="https://github.com">GitHub</a>
+                    <a href="#" class="quick-link" data-url="https://reddit.com">Reddit</a>
+                    <a href="#" class="quick-link" data-url="https://youtube.com">YouTube</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page" id="settings-page">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="settings-section">
+                <h3>Proxy Backend</h3>
+                <p class="setting-description">Choose your preferred proxy backend</p>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="proxy-backend" value="ultraviolet" checked>
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">
+                            <strong>Ultraviolet</strong>
+                            <small>Stable and widely compatible</small>
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="proxy-backend" value="scramjet">
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">
+                            <strong>Scramjet</strong>
+                            <small>Experimental, advanced features</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Transport Method</h3>
+                <p class="setting-description">Select how proxy requests are transported</p>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="transport" value="bare" checked>
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">
+                            <strong>Bare Server</strong>
+                            <small>Standard HTTP transport</small>
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="transport" value="epoxy">
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">
+                            <strong>Epoxy (Wisp)</strong>
+                            <small>End-to-end encrypted via WebSocket</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Search Engine</h3>
+                <p class="setting-description">Default search engine for queries</p>
+                <select id="search-engine" class="select-box">
+                    <option value="duckduckgo" selected>DuckDuckGo</option>
+                    <option value="google">Google</option>
+                    <option value="bing">Bing</option>
+                    <option value="brave">Brave Search</option>
+                </select>
+            </div>
+
+            <div class="settings-section">
+                <h3>Privacy Options</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="clear-cookies" checked>
+                    <span class="checkbox-custom"></span>
+                    <span>Clear cookies on exit</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="block-ads" checked>
+                    <span class="checkbox-custom"></span>
+                    <span>Block ads and trackers</span>
+                </label>
+            </div>
+
+            <button class="btn-primary" id="save-settings">Save Settings</button>
+            <div id="save-message" class="save-message"></div>
+        </div>
+
+        <footer>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span id="status-text">Connected</span>
+            </div>
+            <p class="footer-text">Powered by Ultraviolet, Scramjet, Bare, Wisp & Epoxy</p>
+        </footer>
+    </div>
+
+    <!-- Iframe for proxied content -->
+    <iframe id="proxy-frame" style="display:none;"></iframe>
+
+    <!-- Load proxy libraries -->
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
+    <script src="/scramjet/scramjet.bundle.js"></script>
+    <script src="/baremux/bare.cjs"></script>
+    <script src="/epoxy/index.js"></script>
+    
+    <!-- Main application script -->
+    <script src="/js/app.js" type="module"></script>
+</body>
+</html>
