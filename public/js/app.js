@@ -116,26 +116,20 @@ class ProxyApp {
 
     // Initialize Scramjet proxy
     async initScramjet(transport) {
-        if (typeof Scramjet !== 'undefined') {
-            // Scramjet configuration
-            const scramjetConfig = {
-                prefix: '/scramjet/service/',
-                codec: Scramjet.codecs.xor,
-                config: {
-                    bare: '/bare/',
-                }
-            };
-
-            if (transport === 'epoxy' && typeof BareMux !== 'undefined') {
-                try {
-                    const BareMuxInstance = new BareMux.BareMuxConnection('/baremux/worker.js');
-                    await BareMuxInstance.setTransport('/epoxy/index.js', [{ wisp: 'ws://' + window.location.host + '/wisp/' }]);
-                    console.log('✓ Scramjet with Epoxy transport configured');
-                } catch (error) {
-                    console.warn('Epoxy transport setup failed:', error);
-                }
+        // Scramjet configuration is handled by the scramjet bundle
+        // The codecs are available as __scramjet$codecs global
+        
+        if (transport === 'epoxy' && typeof BareMux !== 'undefined') {
+            try {
+                const BareMuxInstance = new BareMux.BareMuxConnection('/baremux/worker.js');
+                await BareMuxInstance.setTransport('/epoxy/index.js', [{ wisp: 'ws://' + window.location.host + '/wisp/' }]);
+                console.log('✓ Scramjet with Epoxy transport configured');
+            } catch (error) {
+                console.warn('Epoxy transport setup failed:', error);
             }
         }
+        
+        console.log('✓ Scramjet initialized');
     }
 
     // Handle search queries
@@ -178,15 +172,24 @@ class ProxyApp {
             let proxiedUrl;
             
             if (backend === 'ultraviolet' && typeof __uv$config !== 'undefined') {
+                // Ultraviolet handles encoding internally
                 proxiedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-            } else if (backend === 'scramjet' && typeof Scramjet !== 'undefined') {
-                proxiedUrl = '/scramjet/service/' + Scramjet.codec.encode(url);
+            } else if (backend === 'scramjet') {
+                // Scramjet uses codecs for URL encoding
+                // The codec is loaded from scramjet.codecs.js
+                if (typeof __scramjet$codecs !== 'undefined') {
+                    const encoded = __scramjet$codecs.xor.encode(url);
+                    proxiedUrl = '/scramjet/service/' + encoded;
+                } else {
+                    console.error('Scramjet codecs not loaded');
+                    return;
+                }
             } else {
                 console.error('Proxy backend not properly initialized');
                 return;
             }
 
-            // Open in iframe or new window based on preference
+            // Open in iframe
             this.proxyFrame.src = proxiedUrl;
             this.proxyFrame.style.display = 'block';
             this.proxyFrame.classList.add('active');
